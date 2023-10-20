@@ -1,0 +1,9 @@
+node_modules
+watch
+deploy
+tsconfig.tsbuildinfo
+.rollup.cache
+.env
+database.json
+query.rest
+

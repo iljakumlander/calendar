@@ -5,6 +5,7 @@
     "jsx": "react",
     "strict": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
   },
   "include": [

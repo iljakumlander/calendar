@@ -7,7 +7,8 @@ $parts: ('h1', 'form', 'h3');
         margin-top: 0;
     }
 }
-  
+
+@import 'components/calendar/vars';
 
 html {
     font-size: 62.5%;
@@ -20,6 +21,12 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f5f5f5;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+
+    @media screen and (max-width: 640px) {
+        font-size: 2.4vw;
+    }
 }
 
 h1,
@@ -36,3 +43,49 @@ fieldset,
 }
 
 @import 'components/dialog';
+
+.fc {
+    height: 100vh;
+}
+
+.fc-event-main {
+    background-color: inherit;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+    margin: .5em;    
+}
+.fc .fc-toolbar-title {
+    font-size: 1em;
+    text-align: center;
+}
+
+.event {
+    margin: 0;
+    padding: 0;
+    background-color: inherit;
+    display: inline;
+
+    .fc-timegrid-event-short & {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        gap: 0.51rem;
+    }
+
+    &__time,
+    &__title {
+        margin: 0;
+        padding: 0;
+    }
+
+    &__time {
+        font-size: 1.2rem;
+    }
+
+    &__title {
+        font-size: 1.6rem;
+        display: inline;
+        background-color: inherit;
+    }
+}

@@ -1,6 +1,6 @@
 import { Event, EventId } from './types';
 
-const server = process.env.SERVER || 'http://localhost:5000';
+const server = process.env.SERVER || 'http://localhost:3000';
 
 export async function requestEventsInRange(startStr: string, endStr: string): Promise<Event[]>  {
   return new Promise(async (resolve, reject) => {

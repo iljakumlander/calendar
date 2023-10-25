@@ -1,4 +1,5 @@
 import http from 'http';
+import https from 'https';
 import path from 'path';
 import fs from 'fs';
 import mime from 'mime';
@@ -13,12 +14,21 @@ import 'dotenv/config';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const server = (() => {
+    try {
+        return https.createServer({
+            key: fs.readFileSync(path.join(__dirname, process.env.SSL_KEY || '')),
+            cert: fs.readFileSync(path.join(__dirname, process.env.SSL_CERT || '')),
+        });
+    } catch {
+        return http.createServer();
+    }
+})();
+
 const port = process.env.PORT || 3000;
 const allowed = (process.env.ALLOWED_HOSTS || '').split(',').map((host) => host.trim());
 
 const datapath = path.join(__dirname, 'data', 'base.json');
-
-const server = http.createServer();
 const db = new JsonDB(new Config(datapath, true, true, '/'));
 const router = new Router();
 
@@ -293,8 +303,8 @@ server.on('request', async (request, response) => {
 
         const protocol = request.headers['x-forwarded-proto'] || 'http';
         const requestUrl = new URL(request.url || '', `${protocol}://${request.headers.host}`);
-        const sanitizedPath = path.normalize(requestUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
-        const filePath = path.join(__dirname, 'public', sanitizedPath === '/' ? 'index.html' : sanitizedPath);
+        const sanitized = path.normalize(requestUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
+        const filePath = path.join(__dirname, 'public', sanitized === '/' ? 'index.html' : sanitized);
         const readStream = fs.createReadStream(filePath);
         const contentType = mime.getType(filePath) || 'text/html';
         const expires = new Date(Date.now() + 86400000).toUTCString();

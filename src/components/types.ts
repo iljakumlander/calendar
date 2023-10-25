@@ -1,4 +1,4 @@
-import { EventApi, EventInput, EventSourceInput, ViewApi } from '@fullcalendar/core';
+import { Duration, DurationInput, EventApi, EventInput, EventSourceInput, ViewApi } from '@fullcalendar/core';
 import { Dictionary } from '@fullcalendar/core/internal';
 import http from 'http';
 import { Input } from './interfaces';
@@ -33,6 +33,9 @@ export type RECEIVE_EVENTS = 'RECEIVE_EVENTS';
 export type CREATE_EVENT = 'CREATE_EVENT';
 export type UPDATE_EVENT = 'UPDATE_EVENT';
 export type DELETE_EVENT = 'DELETE_EVENT';
+export type CHANGE_VIEW = 'CHANGE_VIEW';
+export type SET_GRID = 'SET_GRID';
+export type RESET_GRID = 'RESET_GRID';
 
 export type ActionType = TOGGLE_WEEKENDS | RECEIVE_EVENTS | CREATE_EVENT | UPDATE_EVENT | DELETE_EVENT;
 
@@ -54,6 +57,14 @@ export type ActionConditional = {
 } | {
   type: DELETE_EVENT;
   eventId: EventId;
+} | {
+  type: CHANGE_VIEW;
+  view: ViewApi;
+} | {
+  type: SET_GRID;
+  definition: DurationInput | Duration | null | undefined;
+} | {
+  type: RESET_GRID;
 };
 
 export type Hash<T> = { [id: string]: T };

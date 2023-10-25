@@ -6,12 +6,14 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
+import { contrastColor } from 'contrast-color';
 import actionCreators from '../actions';
 import { getHashValues } from '../utils';
 import { EventAddArg } from '@fullcalendar/core';
 import { Event, EventInfo, SelectInfo } from '../types';
 import { CalendarProps, State, RangeApi, Input } from '../interfaces';
 import Dialog from '../dialog';
+import colors from '../../../colors.json';
 
 function Calendar ({
     events,
@@ -34,10 +36,10 @@ function Calendar ({
         hour12: false,
     };
     const renderEventContent = (eventInfo: EventInfo) => (
-        <>
-            <b>{eventInfo.timeText}</b>
-            <i>{eventInfo.event.title}</i>
-        </>
+        <dl className="event">
+            <dt className="event__time">{eventInfo.timeText.replace(' - ', '—')}</dt>
+            <dd className="event__title">{eventInfo.event.title}</dd>
+        </dl>
     );
     
     const handleDateSelect = (selectInfo: SelectInfo) => {
@@ -45,7 +47,7 @@ function Calendar ({
 
         setDialog(
             <Dialog
-                title='Add event'
+                title='Create event'
                 prefer="resolve"
                 message={`${formatDate(selectInfo.startStr, formatDateConfig)}—${formatDate(selectInfo.endStr, formatDateConfig)}`}
                 autofocus={true}
@@ -55,7 +57,13 @@ function Calendar ({
                         value: '',
                         title: 'Title',
                         required: true,
-                    }
+                    },
+                    {
+                        name: 'color',
+                        value: '',
+                        title: 'Color',
+                        required: false,
+                    },
                 ]}
                 actions={
                     {
@@ -68,22 +76,23 @@ function Calendar ({
                         },
                         resolve: {
                             type: 'resolve',
-                            caption: 'OK',
+                            caption: 'Create',
                             callback: (values) => {
                                 if (!values || values.title.trim() === '') {
                                     return;
                                 } 
 
                                 calendarApi.addEvent({ // will render immediately. will call handleEventAdd
-                                    title: values.title,
+                                    title: values.title.trim(),
                                     start: selectInfo.startStr,
                                     end: selectInfo.endStr,
-                                    allDay: selectInfo.allDay
+                                    allDay: selectInfo.allDay,
+                                    ...(values.color && values.color.trim() && { backgroundColor: values.color.trim(), borderColor: values.color.trim(), textColor: contrastColor.call({}, { bgColor: values.color.trim(), customNamedColors: colors }) }),
                                 }, true) // temporary=true, will get overwritten when reducer gives new events
 
                                 setDialog(null);
                             },
-                        }
+                        }   
                     }
                 }
             />
@@ -107,7 +116,13 @@ function Calendar ({
                         value: clickInfo.event.title,
                         title: 'Title',
                         required: true,
-                    }
+                    },
+                    {
+                        name: 'color',
+                        value: clickInfo.event.backgroundColor,
+                        title: 'Background color',
+                        required: false,
+                    },
                 ]}
                 actions={
                     {
@@ -124,9 +139,16 @@ function Calendar ({
                             callback: (values) => {
                                 if (!values || values.title.trim() === '') {
                                     return;
-                                } 
+                                }
+
+                                console.log('colors', colors, values.color?.trim());
 
                                 clickInfo.event.setProp('title', values.title.trim());
+                                if (values.color?.trim()) {
+                                    clickInfo.event.setProp('backgroundColor', values.color.trim());
+                                    clickInfo.event.setProp('borderColor', values.color.trim());
+                                    clickInfo.event.setProp('textColor', contrastColor.call({}, { bgColor: values.color.trim(), customNamedColors: colors }));
+                                }
 
                                 setDialog(null);
                             },
@@ -174,6 +196,38 @@ function Calendar ({
         calendarApi.unselect();
     };
 
+    const reportNetworkError = (): void => {
+        setDialog(
+            <Dialog
+                title="Network error"
+                message="Server action could not be completed or API out of reach."
+                prefer="diverge"
+                autofocus={true}
+                inputs={[]}
+                actions={
+                    {
+                        dismiss: {
+                            type: 'dismiss',
+                            caption: 'OK',
+                            callback: () => {
+                                setDialog(null);
+                            },
+                        },
+                        diverge: {
+                            type: 'diverge',
+                            caption: 'Refresh page',
+                            callback: () => {
+                                window.location.reload();
+
+                                setDialog(null);
+                            },
+                        },
+                    }
+                }
+            />
+        );
+    };
+
     const handleDates = (rangeInfo: RangeApi) => {
         requestEvents && requestEvents(rangeInfo.startStr, rangeInfo.endStr)
         .catch(reportNetworkError);
@@ -219,20 +273,42 @@ function Calendar ({
                     }
                 }
                 headerToolbar={{
-                    left: 'create',
-                    center: 'title',
-                    right: 'prev,next',
-                }}
-                footerToolbar={{
                     left: 'dayGridMonth,timeGridWeek,timeGridDay',
-                    right: 'today',
+                    center: 'title',
+                    right: 'prev,today,next',
                 }}
+                slotDuration="00:15:00"
                 initialView='dayGridMonth'
+                firstDay={1}
+                aspectRatio={3}
                 editable={true}
                 selectable={true}
                 selectMirror={true}
                 dayMaxEvents={true}
+                navLinks={true}
                 weekends={weekendsVisible}
+                eventTimeFormat={{
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: false,
+                }}
+                buttonIcons={{
+                    today: 'today',
+                }}
+                buttonText={{
+                    today: 'T',
+                    month: 'M',
+                    week: 'W',
+                    day: 'D',
+                    list: 'L',
+                }}
+                buttonHints={{
+                    today: 'Today',
+                    month: 'Month',
+                    week: 'Week',
+                    day: 'Day',
+                    list: 'List',
+                }}
                 datesSet={handleDates}
                 select={handleDateSelect}
                 events={events}
@@ -257,10 +333,6 @@ function renderSidebarEvent (plainEventObject: Event): JSX.Element {
       </li>
     )
   }
-  
-function reportNetworkError (): void {
-    alert('This action could not be completed')
-}
   
 function mapStateToProps (): (state: State) => CalendarProps {
     const getEventArray = createSelector(

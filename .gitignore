@@ -6,4 +6,5 @@ tsconfig.tsbuildinfo
 .env
 database.json
 query.rest
-
+.env.server.production
+.env.client.production

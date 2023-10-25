@@ -58,6 +58,17 @@ const Dialog: React.FC<DialogProps> = ({
 
                 break;
             
+            case 'Enter':
+                console.log('Enter', defaults, values);
+
+                if (!defaults) {
+                    return;
+                }
+
+                defaults?.callback(values);
+
+                break;
+
             case 'Backspace':
             case 'Delete':
                 if (event.target instanceof HTMLInputElement) {

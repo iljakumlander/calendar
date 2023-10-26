@@ -59,8 +59,6 @@ const Dialog: React.FC<DialogProps> = ({
                 break;
             
             case 'Enter':
-                console.log('Enter', defaults, values);
-
                 if (!defaults) {
                     return;
                 }

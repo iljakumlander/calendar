@@ -1,7 +1,6 @@
 import { Duration, DurationInput, EventApi, EventInput, EventSourceInput, ViewApi } from '@fullcalendar/core';
 import { Dictionary } from '@fullcalendar/core/internal';
 import http from 'http';
-import { Input } from './interfaces';
 
 export type EventId = string;
 

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { EventChangeArg, EventClickArg, EventRemoveArg, FormatDateOptions, formatDate } from '@fullcalendar/core';
@@ -8,17 +8,17 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
 import { contrastColor } from 'contrast-color';
 import actionCreators from '../actions';
-import { getHashValues } from '../utils';
+import { getDateFromYearAndWeek, getHashValues, getUrlFromDate } from '../utils';
 import { EventAddArg } from '@fullcalendar/core';
-import { Event, EventInfo, SelectInfo } from '../types';
-import { CalendarProps, State, RangeApi, Input } from '../interfaces';
+import { useParams, useNavigate } from 'react-router';
+import { Event, EventInfo, SelectInfo, Values } from '../types';
+import { CalendarProps, State, RangeApi } from '../interfaces';
 import Dialog from '../dialog';
 import colors from '../../../colors.json';
 
 function Calendar ({
     events,
     weekendsVisible,
-    toggleWeekends,
     requestEvents,
     createEvent,
     updateEvent,
@@ -26,6 +26,101 @@ function Calendar ({
 }: CalendarProps): JSX.Element {
     const calendar = useRef<FullCalendar>(null);
     const [dialog, setDialog] = useState<JSX.Element | null>(null);
+    const { primary, secondary, tetriary, auxilary } = useParams<Values>();
+    const navigate = useNavigate();
+
+    function detect (primary: string | undefined, secondary: string | undefined, tetriary: string | undefined, auxilary: string | undefined): Current {
+        if (!primary) {
+            return {};
+        }
+        switch (primary) {
+            case 'week':
+            case 'weekly':
+                return {
+                    ...calculateWeek(parseInt(secondary || ''), parseInt(tetriary || '')),
+                    view: 'timeGridWeek',
+                }
+        }
+
+        return calculateDay(parseInt(primary), parseInt(secondary || ''), parseInt(tetriary || ''));
+    }
+
+    function calculateDay (year: number, month: number, day: number): Current {
+        if (isNaN(year)) {
+            return {};
+        }
+
+        if (isNaN(month)) {
+            return {
+                date: new Date(year, 0, 1),
+                view: 'dayGridMonth',
+            }
+        }
+        
+        if (isNaN(day)) {
+            return {
+                date: new Date(year, month - 1, 1),
+                view: 'dayGridMonth',
+            }
+        }
+
+        return {
+            date: new Date(year, month - 1, day),
+            view: 'timeGridDay',
+        }
+    }
+
+    function calculateWeek (week: number, year: number): Current {
+        if (isNaN(week)) {
+            return {
+                date: new Date(),
+            }
+        }
+
+        if (isNaN(year)) {
+            return {
+                date: getDateFromYearAndWeek(new Date().getFullYear(), week),
+            };
+        }
+
+        return {
+            date: getDateFromYearAndWeek(year, week),
+        }
+    }
+
+    type Current = {
+        date?: Date,
+        view?: string,
+    }
+    const [current, setCurrent] = useState<Current>(detect(primary, secondary, tetriary, auxilary));
+
+    useEffect(() => {
+        setCurrent(detect(primary, secondary, tetriary, auxilary));
+    }, [primary, secondary, tetriary, auxilary]);
+
+    useEffect(() => {
+        if (!calendar.current || !current.date || !current.view) {
+            return;
+        }
+
+        if (current.date && current.view) {
+            if (
+                calendar.current?.getApi().view.type === current.view &&
+                calendar.current?.getApi().getDate().getTime() === current.date.getTime()
+            ) {
+                return;
+            }
+
+            calendar.current?.getApi().changeView(current.view || 'dayGridMonth', current.date);
+        }
+
+        if (current.date && calendar.current?.getApi().view.type === current.view) {
+            calendar.current?.getApi().getDate().getTime() !== current.date.getTime() && calendar.current?.getApi().gotoDate(current.date);
+
+            return;
+        }
+    }, [current]);
+
     const formatDateConfig: FormatDateOptions = {
         month: 'long',
         year: 'numeric',
@@ -141,8 +236,6 @@ function Calendar ({
                                     return;
                                 }
 
-                                console.log('colors', colors, values.color?.trim());
-
                                 clickInfo.event.setProp('title', values.title.trim());
                                 if (values.color?.trim()) {
                                     clickInfo.event.setProp('backgroundColor', values.color.trim());
@@ -208,7 +301,7 @@ function Calendar ({
                     {
                         dismiss: {
                             type: 'dismiss',
-                            caption: 'OK',
+                            caption: 'Dismiss',
                             callback: () => {
                                 setDialog(null);
                             },
@@ -229,6 +322,7 @@ function Calendar ({
     };
 
     const handleDates = (rangeInfo: RangeApi) => {
+        // calendar.current?.getApi().view
         requestEvents && requestEvents(rangeInfo.startStr, rangeInfo.endStr)
         .catch(reportNetworkError);
     };
@@ -259,6 +353,128 @@ function Calendar ({
 
     return (
         <>
+            <nav className="header bar">
+                <div className="group buttons -end">
+                    <button onClick={() => {
+                        switch (calendar.current?.getApi().view.type) {
+                            case 'dayGridMonth':
+                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                    includeMonth: true,
+                                    monthsToAdd: -1,
+                                }));
+
+                                break;
+
+                            case 'timeGridWeek':
+                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                    displayWeek: true,
+                                    weeksToAdd: -1,
+                                }));
+
+                                break;
+
+                            case 'timeGridDay':
+                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                    includeDay: true,
+                                    includeMonth: true,
+                                    daysToAdd: -1,
+                                }));
+
+                                break;
+                        }
+                    }} title="Previous">
+                        P
+                    </button>
+                    <button onClick={() => {
+                        switch (calendar.current?.getApi().view.type) {
+                            case 'dayGridMonth':
+                                navigate(getUrlFromDate(new Date(), {
+                                    includeMonth: true,
+                                }));
+
+                                break;
+
+                            case 'timeGridWeek':
+                                navigate(getUrlFromDate(new Date(), {
+                                    displayWeek: true,
+                                }));
+
+                                break;
+
+                            case 'timeGridDay':
+                                navigate(getUrlFromDate(new Date(), {
+                                    includeDay: true,
+                                    includeMonth: true,
+                                }));
+
+                                break;
+                        }
+                    }} title="Today">
+                        T
+                    </button>
+                    <button onClick={() => {
+                        switch (calendar.current?.getApi().view.type) {
+                            case 'dayGridMonth':
+                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                    includeMonth: true,
+                                    monthsToAdd: 1,
+                                }));
+
+                                break;
+
+                            case 'timeGridWeek':
+                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                    displayWeek: true,
+                                    weeksToAdd: 1,
+                                }));
+
+                                break;
+
+                            case 'timeGridDay':
+                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                    includeDay: true,
+                                    includeMonth: true,
+                                    daysToAdd: 1,
+                                }));
+
+                                break;
+                        }
+                    }} title="Next">
+                        N
+                    </button>
+                </div>
+                <div className="group buttons -start">
+                    <button onClick={() => {
+                        navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
+                            includeDay: false,
+                            includeMonth: true,
+                        }));
+                    }
+                    } title="Month">
+                        M
+                    </button>
+                    <button onClick={() => {
+                        navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
+                            displayWeek: true,
+                        }));
+                    }
+                    } title="Week">
+                        W
+                    </button>
+                    <button onClick={() => {
+                        navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
+                            includeDay: true,
+                            includeMonth: true,
+                        }));
+                    }
+                    } title="Day">
+                        D
+                    </button>
+                </div>
+                <div className="group heading -center">
+                    <h1>{calendar.current?.getApi().view.title}</h1>
+                </div>
+            </nav>
             <FullCalendar
                 ref={calendar}
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -272,14 +488,20 @@ function Calendar ({
                         }
                     }
                 }
-                headerToolbar={{
-                    left: 'dayGridMonth,timeGridWeek,timeGridDay',
-                    center: 'title',
-                    right: 'prev,today,next',
-                }}
+                headerToolbar={false}
                 slotDuration="00:15:00"
-                initialView='dayGridMonth'
+                initialDate={current.date || new Date()}
+                initialView={current.view || 'dayGridMonth'}
+                slotLabelFormat={{
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: false,
+                }}
                 firstDay={1}
+                weekNumbers={true}
+                weekNumberFormat={{
+                    week: 'numeric',
+                }}
                 aspectRatio={3}
                 editable={true}
                 selectable={true}
@@ -317,13 +539,26 @@ function Calendar ({
                 eventAdd={handleEventAdd}
                 eventChange={handleEventChange} // called for drag-n-drop/resize
                 eventRemove={handleEventRemove}
+                navLinkDayClick={function (date, jsEvent) {
+                    navigate(getUrlFromDate(date, {
+                        includeMonth: true,
+                        includeDay: true,
+                    }));
+                    this.gotoDate(date);
+                    this.changeView('timeGridDay');
+                }}
+                navLinkWeekClick={function (weekStart, jsEvent) {
+                    navigate(getUrlFromDate(weekStart, {
+                        displayWeek: true,
+                    }));
+                    this.gotoDate(weekStart);
+                    this.changeView('timeGridWeek');
+                }}
             />
             {dialog}
         </>
     );
 }
-
-
 
 function renderSidebarEvent (plainEventObject: Event): JSX.Element {
     return (
@@ -343,7 +578,7 @@ function mapStateToProps (): (state: State) => CalendarProps {
     return (state: State) => {
       return {
         events: getEventArray(state),
-        weekendsVisible: state.weekendsVisible
+        weekendsVisible: state.weekendsVisible,
       }
     }
   }

@@ -324,6 +324,7 @@ server.on('request', async (request, response) => {
     
         readStream.on('error', (error: NodeJS.ErrnoException) => {
             if (error.code === 'ENOENT') {
+                /*
                 handleException(request, response, {
                     status: 'rejected',
                     reason: 'error',
@@ -331,6 +332,22 @@ server.on('request', async (request, response) => {
                     message: 'Not found',
                     details: `The requested resource ${filePath} could not be found.`,
                 });
+                */
+
+                fs.readFile(path.join(__dirname, 'public', 'index.html'), (err, data) => {
+                    if (err) {
+                        handleException(request, response, {
+                            status: 'rejected',
+                            reason: 'error',
+                            code: 404,
+                            message: 'Not found',
+                            details: `The requested resource ${filePath} could not be found.`,
+                        });
+                    }
+
+                    response.setHeader('Content-Type', 'text/html');
+                    response.end(data);
+                  });
 
                 return;
             }

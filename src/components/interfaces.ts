@@ -1,10 +1,11 @@
 import { Dictionary } from '@fullcalendar/core/internal';
 import { Events, Event, Hash, RequestHandler, DialogActionType, Actions } from './types';
-import { ReactNode } from 'react';
 
 export interface CalendarProps {
     events: Events;
     weekendsVisible?: boolean;
+    currentDate?: Date;
+    currentView?: string;
     toggleWeekends?: () => void;
     requestEvents?: (start: string, end: string) => Promise<void>;
     createEvent?: (event: Dictionary) => Promise<void>;

@@ -15,9 +15,15 @@
     .contents {
         background-color: #fff;
         padding: 20px;
-        border-radius: 5px;
+        border-radius: 10px;
         max-width: 400px;
         width: 100%;
+
+        @supports (mask-image: paint(smooth-corners)) {
+            border-radius: 0;
+              mask-image: paint(smooth-corners);
+              --smooth-corners: 10;
+        }
     }
     
     .bar {

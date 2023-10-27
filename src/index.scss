@@ -85,6 +85,14 @@ fieldset,
         justify-content: space-between;
         align-items: center;
         gap: 1em;
+
+        button {
+            padding: 8p 16px;
+
+            @media screen and (max-width: 640px) {
+                padding: 5px 10px;
+            }
+        }
     }
 
     h1 {
@@ -112,4 +120,9 @@ fieldset,
 .fc .fc-toolbar-title {
     font-size: 1em;
     text-align: center;
+}
+
+.fc .fc-col-header-cell-cushion {
+    display: inline-block;
+    padding: 2px 30%;
 }

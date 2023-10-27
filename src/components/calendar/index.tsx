@@ -7,6 +7,21 @@ import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
 import { contrastColor } from 'contrast-color';
+import Icon from '@mdi/react';
+
+import {
+    MemoryArrowRight as ArrowRightIcon,
+    MemoryArrowLeft as ArrowLeftIcon,
+} from '@pictogrammers/memory';
+
+import {
+    mdiCalendar as CalendarIcon,
+    mdiTimetable as TimetableIcon,
+    mdiCalendarWeek as CalendarWeekIcon,
+    mdiCalendarMonth as CalendarMonthIcon,
+    mdiCalendarToday as CalendarTodayIcon,
+} from '@mdi/js';
+
 import actionCreators from '../actions';
 import { getDateFromYearAndWeek, getHashValues, getUrlFromDate } from '../utils';
 import { EventAddArg } from '@fullcalendar/core';
@@ -354,37 +369,7 @@ function Calendar ({
     return (
         <>
             <nav className="header bar">
-                <div className="group buttons -end">
-                    <button onClick={() => {
-                        switch (calendar.current?.getApi().view.type) {
-                            case 'dayGridMonth':
-                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
-                                    includeMonth: true,
-                                    monthsToAdd: -1,
-                                }));
-
-                                break;
-
-                            case 'timeGridWeek':
-                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
-                                    displayWeek: true,
-                                    weeksToAdd: -1,
-                                }));
-
-                                break;
-
-                            case 'timeGridDay':
-                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
-                                    includeDay: true,
-                                    includeMonth: true,
-                                    daysToAdd: -1,
-                                }));
-
-                                break;
-                        }
-                    }} title="Previous">
-                        P
-                    </button>
+                <div className="buttons bar -start">
                     <button onClick={() => {
                         switch (calendar.current?.getApi().view.type) {
                             case 'dayGridMonth':
@@ -410,40 +395,88 @@ function Calendar ({
                                 break;
                         }
                     }} title="Today">
-                        T
+                        <Icon path={CalendarTodayIcon}
+                            title="Calendar today"
+                            size="24px"
+                        />
                     </button>
-                    <button onClick={() => {
-                        switch (calendar.current?.getApi().view.type) {
-                            case 'dayGridMonth':
-                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
-                                    includeMonth: true,
-                                    monthsToAdd: 1,
-                                }));
+                    <div className="group buttons">
+                        <button onClick={() => {
+                            switch (calendar.current?.getApi().view.type) {
+                                case 'dayGridMonth':
+                                    navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                        includeMonth: true,
+                                        monthsToAdd: -1,
+                                    }));
 
-                                break;
+                                    break;
 
-                            case 'timeGridWeek':
-                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
-                                    displayWeek: true,
-                                    weeksToAdd: 1,
-                                }));
+                                case 'timeGridWeek':
+                                    navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                        displayWeek: true,
+                                        weeksToAdd: -1,
+                                    }));
 
-                                break;
+                                    break;
 
-                            case 'timeGridDay':
-                                navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
-                                    includeDay: true,
-                                    includeMonth: true,
-                                    daysToAdd: 1,
-                                }));
+                                case 'timeGridDay':
+                                    navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                        includeDay: true,
+                                        includeMonth: true,
+                                        daysToAdd: -1,
+                                    }));
 
-                                break;
-                        }
-                    }} title="Next">
-                        N
-                    </button>
+                                    break;
+                            }
+                        }} title="Previous">
+                            <Icon path={ArrowLeftIcon}
+                                title="Arrow Left"
+                                size="24px"
+                                horizontal
+                                vertical
+                                rotate={180}
+                            />
+                        </button>
+                        
+                        <button onClick={() => {
+                            switch (calendar.current?.getApi().view.type) {
+                                case 'dayGridMonth':
+                                    navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                        includeMonth: true,
+                                        monthsToAdd: 1,
+                                    }));
+
+                                    break;
+
+                                case 'timeGridWeek':
+                                    navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                        displayWeek: true,
+                                        weeksToAdd: 1,
+                                    }));
+
+                                    break;
+
+                                case 'timeGridDay':
+                                    navigate(getUrlFromDate(calendar.current?.getApi().getDate(), {
+                                        includeDay: true,
+                                        includeMonth: true,
+                                        daysToAdd: 1,
+                                    }));
+
+                                    break;
+                            }
+                        }} title="Next">
+                            <Icon path={ArrowRightIcon}
+                                title="Arrow Right"
+                                size="24px"
+                                horizontal
+                                vertical
+                                rotate={180}
+                            />
+                        </button>
+                    </div>
                 </div>
-                <div className="group buttons -start">
+                <div className="group buttons -end">
                     <button onClick={() => {
                         navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
                             includeDay: false,
@@ -451,7 +484,13 @@ function Calendar ({
                         }));
                     }
                     } title="Month">
-                        M
+                        <Icon path={CalendarMonthIcon}
+                            title="Calendar month"
+                            size="24px"
+                            horizontal
+                            vertical
+                            rotate={180}
+                        />
                     </button>
                     <button onClick={() => {
                         navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
@@ -459,7 +498,13 @@ function Calendar ({
                         }));
                     }
                     } title="Week">
-                        W
+                        <Icon path={CalendarWeekIcon}
+                            title="Calendar week"
+                            size="24px"
+                            horizontal
+                            vertical
+                            rotate={180}
+                        />
                     </button>
                     <button onClick={() => {
                         navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
@@ -468,7 +513,13 @@ function Calendar ({
                         }));
                     }
                     } title="Day">
-                        D
+                        <Icon path={CalendarIcon}
+                            title="Calendar day"
+                            size="24px"
+                            horizontal
+                            vertical
+                            rotate={180}
+                        />
                     </button>
                 </div>
                 <div className="group heading -center">

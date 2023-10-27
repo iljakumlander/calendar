@@ -9,6 +9,7 @@
     "allowSyntheticDefaultImports": true,
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "@pictogrammers"
   ]
 }

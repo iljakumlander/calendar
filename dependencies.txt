@@ -1,0 +1,5 @@
+Dependencies licences are generated during deploy and placed in a public root directory. It is accessable by navigating to /dependencies.txt on your server public folder or in a client output.
+
+Check package.json for both application and development dependencies.
+
+This application licence is accessable in LICENSE file in the root of the package.

@@ -263,7 +263,7 @@ function Calendar ({
                         },
                         diverge: {
                             type: 'diverge',
-                            caption: 'Delete',
+                            caption: 'Delete...',
                             callback: () => {
                                 setDialog(
                                     <Dialog

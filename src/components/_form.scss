@@ -42,8 +42,8 @@ form {
             }
         
             &:focus {
-                outline: none;
-                box-shadow: 0 0 5px $color-primary;
+                outline-offset: 2px;
+                z-index: 1;
             }
         }
     }
@@ -64,7 +64,7 @@ form {
         font-size: $font-size;
         padding: 10px 20px;
         cursor: pointer;
-        transition: all 0.3s ease-in-out;
+        transition: all 100ms ease-in-out;
 
         @supports (mask-image: paint(smooth-corners)) {
             border-radius: 0;
@@ -81,7 +81,8 @@ form {
         }
 
         &:focus {
-            outline-offset: 1px;
+            outline-offset: 2px;
+            z-index: 1;
         }
 
         &[data-autofocus] {

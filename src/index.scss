@@ -1,7 +1,7 @@
 $parts: ('h1', 'form', 'h3');
 
 @mixin margin-vertical {
-    margin: 1em 0 auto;
+    margin: 20px 0 auto;
 
     &:first-child {
         margin-top: 0;
@@ -13,6 +13,10 @@ $parts: ('h1', 'form', 'h3');
 html {
     font-size: 62.5%;
     box-sizing: border-box;
+    height: 100vh;
+    height: -moz-available;
+    height: -webkit-fill-available;
+    width: fill-available;
 }
 
 body {
@@ -21,8 +25,10 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f5f5f5;
-    overflow: auto;
+    overflow: hidden;
     -webkit-overflow-scrolling: touch;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
 
     @media screen and (max-width: 640px) {
         font-size: 2.4vw;
@@ -42,6 +48,7 @@ fieldset,
     @include margin-vertical;
 }
 
+@import 'components/form';
 @import 'components/dialog';
 
 .event {
@@ -144,32 +151,39 @@ fieldset,
 }
 
 .fc {
-    height: calc(100vh - 64px);
-    position: relative;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 1;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
-    margin-top: 64px;
+    -webkit-backdrop-filter: blur(10px);
 
     @media screen and (max-width: 640px) {
-        height: calc(100vh - 128px);
-        margin-bottom: 64px;
+        /*
+        height: calc(100vh - 210px);
+        bottom: 128px;
+        */
+        bottom: 64px;
     }
-}
 
-.fc-event-main {
-    background-color: inherit;
-}
+    .fc-event-main {
+        background-color: inherit;
+    }
 
-.fc .fc-toolbar.fc-header-toolbar {
-    margin: .5em;    
-}
-.fc .fc-toolbar-title {
-    font-size: 1em;
-    text-align: center;
-}
+    .fc-toolbar.fc-header-toolbar {
+        margin: .5em;    
+    }
 
-.fc .fc-col-header-cell-cushion {
-    display: inline-block;
-    padding: 2px 30%;
+    .fc-toolbar-title {
+        font-size: 1em;
+        text-align: center;
+    }
+
+    .fc-col-header-cell-cushion {
+        display: inline-block;
+        padding: 2px 30%;
+    }
 }

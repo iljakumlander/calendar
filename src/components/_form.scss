@@ -80,6 +80,10 @@ form {
             background-color: darken($color-button-secondary, 20%);
         }
 
+        &:focus {
+            outline-offset: 1px;
+        }
+
         &[data-autofocus] {
             background-color: $color-button-default;
 

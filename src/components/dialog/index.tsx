@@ -111,6 +111,7 @@ const Dialog: React.FC<DialogProps> = ({
     return (
         <div ref={dialogRef} className="dialog" onKeyDown={press} tabIndex={0}>
             <div className="contents">
+                {cancellable && <button className="exit" onClick={cancel} type="button">Exit {title && title} dialog box</button>}
                 <FocusLock>
                     {title && <h2>{title}</h2>}
                     {message && <p>{message}</p>}

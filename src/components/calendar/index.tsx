@@ -524,7 +524,7 @@ function Calendar ({
                         />
                     </button>
                     <button className={calendar.current?.getApi().view.type === 'timeGridDay' ? '-active' : undefined} onClick={() => {
-                        navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
+                        navigate(getUrlFromDate(calendar.current?.getApi().view.type === 'dayGridMonth' && inRangeCurrent() ? new Date() : calendar.current?.getApi().getDate() || new Date(), {
                             includeDay: true,
                             includeMonth: true,
                         }));

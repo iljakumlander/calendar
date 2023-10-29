@@ -9,13 +9,29 @@ import license from 'rollup-plugin-license';
 import replace from '@rollup/plugin-replace';
 import json from '@rollup/plugin-json'
 import dotenv from 'dotenv';
+import { rollupPluginHTML as html } from '@web/rollup-plugin-html';
+
+dotenv.config({ path: './.env.client' + (process.env.NODE_ENV === 'production' ? '.production' : '') });
 
 const production = process.env.NODE_ENV === 'production';
 const destianion = production ? 'deploy' : 'watch';
-
-dotenv.config({ path: './.env.client' + (production ? '.production' : '') });
+const root = process.env.CLIENT_ROOT || '/';
 
 export default [
+  {
+    input: 'src/index.html',
+    output: { dir: destianion + '/client' },
+    plugins: [
+      html({
+        extractAssets: false,
+        transformHtml: [
+          html => html.replace('/index.js', `${root}index.js`),
+          html => html.replace('/index.css', `${root}index.css`),
+          html => html.replace('/favicon.ico', `${root}favicon.ico`),
+        ],
+      }),
+    ],
+  },
   {
     input: 'src/client.tsx',
     output: {
@@ -64,13 +80,13 @@ export default [
       copy({
         targets: [
           { src: 'LICENSE', dest: destianion + '/client' },
-          { src: 'src/index.html', dest: destianion + '/client' },
           { src: 'static/**/*', dest: destianion + '/client' },
         ]
       }),
       replace({
         'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development'),
         'process.env.SERVER': JSON.stringify(process.env.SERVER),
+        'process.env.CLIENT_ROOT': JSON.stringify(process.env.CLIENT_ROOT),
       }),
     ],
   },

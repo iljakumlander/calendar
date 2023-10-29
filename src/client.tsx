@@ -13,7 +13,9 @@ const router = createBrowserRouter([
     path: "/:primary?/:secondary?/:tetriary?/:auxilary?",
     element: <Calendar />,
   },
-]);
+], {
+  basename: process.env.CLIENT_ROOT || '/',
+});
 
 const node = document.querySelector('body') as HTMLBodyElement;
 const root = createRoot(node);

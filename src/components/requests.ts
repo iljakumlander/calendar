@@ -17,7 +17,7 @@ export async function requestEventsInRange(startStr: string, endStr: string): Pr
             endStr,
           })
         }
-    );
+      );
       const events = await response.json()
   
       resolve(events);

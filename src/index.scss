@@ -56,34 +56,57 @@ fieldset,
     padding: 0;
     background-color: inherit;
     display: inline;
-
-    .fc-timegrid-event-short & {
-        display: flex;
-        flex-direction: row;
-        align-items: baseline;
-        gap: 0.51rem;
-    }
+    overflow: hidden;
 
     &__time,
     &__title {
         margin: 0;
         padding: 0;
+        display: inline;
     }
 
     &__time {
         font-size: 1.2rem;
+        float: right;
+
+        @media screen and (max-width: 640px) {
+            font-size: 6px;
+        }
     }
 
     &__title {
         font-size: 1.6rem;
-        display: inline;
         background-color: inherit;
+
+        @media screen and (max-width: 640px) {
+            font-size: 12.3px;
+        }
+    }
+
+    .fc-daygrid-dot-event & {
+        &__time {
+            float: left;
+            margin-right: 3px;
+            font-size: 1.6rem;
+
+            @media screen and (max-width: 640px) {
+                font-size: 12.3px;
+            }
+        }
+
+        &__title {
+            font-size: 1.2rem;
+
+            @media screen and (max-width: 640px) {
+                font-size: 8px;
+            }
+        }
     }
 }
 
 .header {
     height: 64px;
-    padding: .5em;
+    padding: 10px;
     position: fixed;
     top: 0;
     left: 0;
@@ -106,8 +129,8 @@ fieldset,
         align-content: center;
 
         button {
-            min-height: 24px;
-            min-width: 24px;
+            min-height: 32px;
+            min-width: 38px;
             max-height: 44px;
             max-width: 44px;
             width: 10vh;
@@ -186,4 +209,18 @@ fieldset,
         display: inline-block;
         padding: 2px 30%;
     }
+
+    .fc-daygrid-week-number {
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        padding: 0;
+        line-height: 20px;
+        text-align: center;
+        margin: 1px;
+    }
+
+   .fc-event-main {
+        overflow: hidden;
+   }
 }

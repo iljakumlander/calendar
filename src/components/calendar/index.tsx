@@ -16,7 +16,6 @@ import {
 
 import {
     mdiCalendar as CalendarIcon,
-    mdiTimetable as TimetableIcon,
     mdiCalendarWeek as CalendarWeekIcon,
     mdiCalendarMonth as CalendarMonthIcon,
     mdiCalendarToday as CalendarTodayIcon,
@@ -43,6 +42,12 @@ function Calendar ({
     const [dialog, setDialog] = useState<JSX.Element | null>(null);
     const { primary, secondary, tetriary, auxilary } = useParams<Values>();
     const navigate = useNavigate();
+    const [range, setRange] = useState<{
+        startStr: string,
+        endStr: string,
+    } | null>(null);
+    const inRange = (start: Date = new Date(), end: Date = new Date(), date: Date = new Date()): boolean => date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
+    const inRangeCurrent = (date: Date = new Date()): boolean => inRange(calendar.current?.getApi().view.activeStart, calendar.current?.getApi().view.activeEnd, date);
 
     function detect (primary: string | undefined, secondary: string | undefined, tetriary: string | undefined, auxilary: string | undefined): Current {
         if (!primary) {
@@ -108,6 +113,15 @@ function Calendar ({
         view?: string,
     }
     const [current, setCurrent] = useState<Current>(detect(primary, secondary, tetriary, auxilary));
+
+    useEffect(() => {
+        if (!range) {
+            return;
+        }
+
+        requestEvents && requestEvents(range.startStr, range.endStr)
+        .catch(reportNetworkError);
+    }, [range]);
 
     useEffect(() => {
         setCurrent(detect(primary, secondary, tetriary, auxilary));
@@ -268,7 +282,7 @@ function Calendar ({
                                 setDialog(
                                     <Dialog
                                         title='Delete event?'
-                                        message={`Are you sure you want to delete '${clickInfo.event.title}' that runs from ${formatDate(clickInfo.event.startStr, formatDateConfig)} to ${formatDate(clickInfo.event.endStr, formatDateConfig)} event?`}
+                                        message={`Are you sure you want to delete '${clickInfo.event.title}' that runs from ${formatDate(clickInfo.event.startStr, formatDateConfig)} to ${formatDate(clickInfo.event.endStr, formatDateConfig)} event? There is no undo for this action.`}
                                         prefer="reject"
                                         inputs={[]}
                                         autofocus={true}
@@ -276,7 +290,7 @@ function Calendar ({
                                             {
                                                 reject: {
                                                     type: 'reject',
-                                                    caption: 'No',
+                                                    caption: 'Keep',
                                                     callback: () => {
                                                         setDialog(null);
                                                     },
@@ -338,8 +352,11 @@ function Calendar ({
 
     const handleDates = (rangeInfo: RangeApi) => {
         // calendar.current?.getApi().view
-        requestEvents && requestEvents(rangeInfo.startStr, rangeInfo.endStr)
-        .catch(reportNetworkError);
+        console.log('setting range >>', rangeInfo);
+        setRange({
+            startStr: rangeInfo.startStr,
+            endStr: rangeInfo.endStr,
+        });
     };
     
     const handleEventAdd = (addInfo: EventAddArg) => {
@@ -370,7 +387,7 @@ function Calendar ({
         <>
             <nav className="header bar">
                 <div className="buttons bar -start">
-                    <button onClick={() => {
+                    <button className={inRangeCurrent() ? '-active' : undefined} onClick={() => {
                         switch (calendar.current?.getApi().view.type) {
                             case 'dayGridMonth':
                                 navigate(getUrlFromDate(new Date(), {
@@ -477,7 +494,7 @@ function Calendar ({
                     </div>
                 </div>
                 <div className="group buttons -end">
-                    <button onClick={() => {
+                    <button className={calendar.current?.getApi().view.type === 'dayGridMonth' ? '-active' : undefined} onClick={() => {
                         navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
                             includeDay: false,
                             includeMonth: true,
@@ -492,8 +509,8 @@ function Calendar ({
                             rotate={180}
                         />
                     </button>
-                    <button onClick={() => {
-                        navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
+                    <button className={calendar.current?.getApi().view.type === 'timeGridWeek' ? '-active' : undefined} onClick={() => {
+                        navigate(getUrlFromDate(inRangeCurrent() ? new Date() : calendar.current?.getApi().getDate() || new Date(), {
                             displayWeek: true,
                         }));
                     }
@@ -506,7 +523,7 @@ function Calendar ({
                             rotate={180}
                         />
                     </button>
-                    <button onClick={() => {
+                    <button className={calendar.current?.getApi().view.type === 'timeGridDay' ? '-active' : undefined} onClick={() => {
                         navigate(getUrlFromDate(calendar.current?.getApi().getDate() || new Date(), {
                             includeDay: true,
                             includeMonth: true,

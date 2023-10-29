@@ -22,7 +22,7 @@ export function isResponse(obj: any): obj is Response {
 }
 
 export function getDateFromYearAndWeek (year: number, weekNumber: number) {
-  return moment().year(year).week(weekNumber).toDate();
+  return moment().year(year).isoWeek(weekNumber).toDate();
 }
 
 export function getWeekNumber (date: Date): [number, number] {

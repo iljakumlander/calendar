@@ -73,11 +73,18 @@ form {
         }
     
         &:hover {
-            background-color: darken($color-button-secondary, 10%);
+            background-color: darken($color-button-secondary, 50%);
         }
     
+        &.-active,
         &:active {
             background-color: darken($color-button-secondary, 20%);
+        }
+
+        &.-active {
+            cursor: default;
+            background-color: lighten($color-button-secondary, 30%);
+            color: $color-button-secondary;
         }
 
         &:focus {

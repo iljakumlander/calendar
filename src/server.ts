@@ -48,7 +48,7 @@ router.get('/api/events', async (request, response) => {
         const events = await db.getObject<Event[]>("/events");
         const result = JSON.stringify(events);
 
-        response.setHeader('Content-Length', result.length);
+        response.setHeader('Content-Length', Buffer.byteLength(result, 'utf8'));
         response.setHeader('Expires', new Date().toUTCString());
         response.writeHead(200);
         response.end(result);
@@ -83,7 +83,7 @@ router.post('/api/events', async (request, response) => {
             return (eventStart >= start && eventStart <= end) || (eventEnd >= start && eventEnd <= end);
         }));
 
-        response.setHeader('Content-Length', result.length);
+        response.setHeader('Content-Length', Buffer.byteLength(result, 'utf8'));
         response.setHeader('Expires', new Date().toUTCString());
         response.writeHead(200);
         response.end(result);
@@ -106,7 +106,7 @@ router.get('/api/event/:id', async (request, response, params) => {
         const event = await db.getData(`/events[${index}]`);
         const result = JSON.stringify(event);
 
-        response.setHeader('Content-Length', result.length);
+        response.setHeader('Content-Length', Buffer.byteLength(result, 'utf8'));
         response.setHeader('Expires', new Date().toUTCString());
         response.writeHead(200);
         response.end(result);
@@ -151,7 +151,7 @@ router.post('/api/event', async (request, response, params) => {
             id,
         });
 
-        response.setHeader('Content-Length', result.length);
+        response.setHeader('Content-Length', Buffer.byteLength(result, 'utf8'));
         response.setHeader('Expires', new Date().toUTCString());
         response.writeHead(200);
         response.end(result);
@@ -199,7 +199,7 @@ router.put('/api/event/:id', async (request: http.IncomingMessage, response: htt
             id: params.id,
         });
 
-        response.setHeader('Content-Length', result.length);
+        response.setHeader('Content-Length', Buffer.byteLength(result, 'utf8'));
         response.setHeader('Expires', new Date().toUTCString());
         response.writeHead(200);
         response.end(result);
@@ -235,7 +235,7 @@ router.delete('/api/event/:id', async (request, response, params) => {
             details: `User with id '${params.id}' was deleted`,
         });
 
-        response.setHeader('Content-Length', result.length);
+        response.setHeader('Content-Length', Buffer.byteLength(result, 'utf8'));
         response.setHeader('Expires', new Date().toUTCString());
         response.writeHead(200);
         response.end(result);

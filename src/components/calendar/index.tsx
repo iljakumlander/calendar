@@ -560,6 +560,7 @@ function Calendar ({
                 slotDuration="00:15:00"
                 initialDate={current.date || new Date()}
                 initialView={current.view || 'dayGridMonth'}
+                nowIndicator={true}
                 slotLabelFormat={{
                     hour: 'numeric',
                     minute: '2-digit',

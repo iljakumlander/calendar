@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import FocusLock from 'react-focus-lock';
 import { Dialog as DialogProps } from '../interfaces';
 import { Values } from '../types';
+import Field from '../form/field';
 
 const Dialog: React.FC<DialogProps> = ({
     title,
@@ -120,12 +121,15 @@ const Dialog: React.FC<DialogProps> = ({
                             {inputs.map((input, index) => (
                                 <fieldset key={index}>
                                     {input.title && <legend>{input.title}</legend>}
-                                    <input
-                                        type="text" name={input.name}
+                                    <Field
+                                        type={input.type}
+                                        name={input.name}
                                         value={values[input.name]}
-                                        onChange={change}
                                         required={input.required}
-                                        {...(autofocus && index === 0 ? { 'data-autofocus': true } : {})}
+                                        autofocus={autofocus && index === 0}
+                                        options={input.options}
+                                        checked={input.checked}
+                                        onChange={change}
                                     />
                                 </fieldset>
                             ))}

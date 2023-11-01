@@ -184,9 +184,20 @@ function Calendar ({
                     },
                     {
                         name: 'color',
+                        type: 'select',
                         value: '',
                         title: 'Color',
                         required: false,
+                        options: [
+                            {
+                                value: '',
+                                label: 'Default',
+                            },
+                            ...Object.keys(colors).map((color) => ({
+                                value: color,
+                                label: color,
+                            })),
+                        ],
                     },
                 ]}
                 actions={
@@ -243,9 +254,21 @@ function Calendar ({
                     },
                     {
                         name: 'color',
+                        type: 'select',
                         value: clickInfo.event.backgroundColor,
-                        title: 'Background color',
+                        title: 'Background',
                         required: false,
+                        options: [
+                            {
+                                value: '',
+                                label: 'Default',
+                            },
+                            ...Object.keys(colors).map((color) => ({
+                                value: color,
+                                label: color,
+                                ...(color === clickInfo.event.backgroundColor && { selected: true }),
+                            })),
+                        ],
                     },
                 ]}
                 actions={
@@ -351,8 +374,6 @@ function Calendar ({
     };
 
     const handleDates = (rangeInfo: RangeApi) => {
-        // calendar.current?.getApi().view
-        console.log('setting range >>', rangeInfo);
         setRange({
             startStr: rangeInfo.startStr,
             endStr: rangeInfo.endStr,

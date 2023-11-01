@@ -50,6 +50,33 @@ export interface Input {
     value: string;
     title?: string;
     required?: boolean;
+    type?: string;
+    label?: string;
+    placeholder?: string;
+    autofocus?: boolean;
+    pattern?: string;
+    min?: number;
+    max?: number;
+    step?: number;
+    maxlength?: number;
+    minlength?: number;
+    size?: number;
+    multiple?: boolean;
+    accept?: string;
+    autocomplete?: string;
+    checked?: boolean;
+    disabled?: boolean;
+    readonly?: boolean;
+    selected?: boolean;
+    src?: string;
+    alt?: string;
+    height?: number;
+    width?: number;
+    cols?: number;
+    rows?: number;
+    wrap?: string;
+    onChange?: React.ChangeEventHandler;
+    options?: Array<{ value?: string, label?: string, selected?: boolean }>;
 }
 
 

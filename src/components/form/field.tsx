@@ -15,7 +15,6 @@ export default function Field ({
 }: Input): JSX.Element {
     switch (type) {
         case 'select':
-            console.log('options', options);
             return (
                 <select
                     name={name}

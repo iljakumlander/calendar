@@ -1,4 +1,4 @@
-import { Duration, DurationInput, EventApi, EventInput, EventSourceInput, ViewApi } from '@fullcalendar/core';
+import { Duration, DurationInput, EventApi, EventClickArg, EventInput, EventSourceInput, ViewApi } from '@fullcalendar/core';
 import { Dictionary } from '@fullcalendar/core/internal';
 import http from 'http';
 
@@ -120,4 +120,41 @@ export type Actions = {
 
 export type Values = {
   [key: string]: string;
+};
+
+export type Current = {
+  date?: Date,
+  view?: string,
+  time?: string,
+}
+
+export type Colors = {
+  [color: string]: string,
+};
+
+export type CreateEventDialog = {
+  selectInfo: SelectInfo,
+  colors: Colors,
+  resolve: (values: Values) => void,
+  dismiss: () => void,
+};
+
+export type UpdateEventDialog = Partial<CreateEventDialog> & {
+  clickInfo: EventClickArg,
+  diverge: (event: EventClickArg) => void,
+}
+export type DeleteEventDialog = {
+  clickInfo: EventClickArg,
+  resolve: (values: Values) => void,
+  reject: () => void,
+}
+
+export type NetworkErrorDialog = {
+  diverge: () => void,
+  dismiss: () => void,
+}
+
+export type Range = {
+  startStr: string,
+  endStr: string,
 };

@@ -138,7 +138,7 @@ const Dialog: React.FC<DialogProps> = ({
                         </form>
                     )}
                     {(dismiss || resolve || reject || diverge) && (
-                        <div className={['bar', prefer ? `-${prefer}` : ''].join(' ').trim()}>
+                        <div className={['buttons bar', prefer ? `-${prefer}` : ''].join(' ').trim()}>
                             {dismiss && <button className={dismiss.type} onClick={cancel}  {...(prefer === dismiss.type ? { "data-autofocus": true } : { type: 'button'})} >{dismiss.caption}</button>}
                             {resolve && <button className={resolve.type} onClick={confirm} {...(prefer === resolve.type ? { "data-autofocus": true } : { type: 'button'})} >{resolve.caption}</button>}
                             {reject && <button className={reject.type} onClick={deny} {...(prefer === reject.type ? { "data-autofocus": true } : { type: 'button'})}>{reject.caption}</button>}

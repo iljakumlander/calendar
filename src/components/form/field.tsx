@@ -19,6 +19,32 @@ export default function Field ({
             return (
                 <ColorPicker onChange={onChange} />
             );
+        case 'colorselect':
+            return (
+                <div className="bar">
+                    <select
+                        name={name}
+                        value={value}
+                        onChange={onChange}
+                        required={required}
+                        data-autofocus={autofocus}
+                        {...props}
+                    >
+                        {options && options.map((option, index) => (
+                            <option key={index} value={option.value}>{option.label}</option>
+                        ))}
+                    </select>
+                    <input
+                        type="color"
+                        name={name}
+                        value={value}
+                        onChange={onChange}
+                        required={required}
+                        data-autofocus={autofocus}
+                        {...props}
+                    />
+                </div>
+            );
         case 'select':
             return (
                 <select

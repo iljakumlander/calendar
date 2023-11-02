@@ -27,7 +27,7 @@ const Edit = ({
             },
             {
                 name: 'color',
-                type: 'color',
+                type: 'colorselect',
                 value: clickInfo.event.backgroundColor,
                 title: 'Background',
                 required: false,

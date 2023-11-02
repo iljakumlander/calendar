@@ -26,7 +26,7 @@ const Create = ({
             },
             {
                 name: 'color',
-                type: 'color',
+                type: 'colorselect',
                 value: '',
                 title: 'Background',
                 required: false,

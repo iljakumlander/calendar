@@ -1,5 +1,6 @@
 import React from 'react';
 import { Input } from '../interfaces';
+import { ColorPicker } from './eyedropper';
 
 export default function Field ({
     type,
@@ -14,6 +15,10 @@ export default function Field ({
     ...props
 }: Input): JSX.Element {
     switch (type) {
+        case 'eyedropper':
+            return (
+                <ColorPicker onChange={onChange} />
+            );
         case 'select':
             return (
                 <select

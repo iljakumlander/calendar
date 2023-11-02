@@ -19,12 +19,12 @@ const Network = ({
                 dismiss: {
                     type: 'dismiss',
                     caption: 'Dismiss',
-                    callback: () => diverge(),
+                    callback: () => dismiss(),
                 },
                 diverge: {
                     type: 'diverge',
                     caption: 'Refresh page',
-                    callback: () => dismiss(),
+                    callback: () => diverge(),
                 },
             }
         }

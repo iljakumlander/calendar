@@ -87,4 +87,6 @@ export interface Dialog {
   actions?: Actions;
   prefer?: DialogActionType;
   autofocus?: boolean;
+  className?: string;
+  onDisplay?: (dialog: Dialog) => void;
 }

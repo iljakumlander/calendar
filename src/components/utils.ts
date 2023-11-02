@@ -99,7 +99,7 @@ export function decodeTime (input: string): string | null {
   return formatTime(hour, minutes);
 }
 
-function extractTimeComponents(input: string): [string, string] | null {
+function extractTimeComponents (input: string): [string, string] | null {
   const result = /^@?(\d{1,2})[.:]?(\d{2})?$/.exec(input);
   
   if (!result) {

@@ -15,8 +15,6 @@ import { CalendarProps, RangeApi } from '../interfaces';
 import { detect, getUrlFromDate, inRange } from '../utils';
 import { mapStateToProps } from './helpers';
 
-import colors from '../../../colors.json';
-
 import Header from './header';
 import Create from './dialogues/event/create';
 import Edit from './dialogues/event/edit';
@@ -24,6 +22,8 @@ import Delete from './dialogues/event/delete';
 import Network from './dialogues/errors/network';
 
 import { renderEventContent } from './elements';
+
+import colors from '../../../colors.json';
 
 function Calendar ({
     events,
@@ -191,6 +191,12 @@ function Calendar ({
             calendar.current?.getApi().getDate().getTime() !== current.date.getTime() && calendar.current?.getApi().gotoDate(current.date);
 
             return;
+        }
+
+        console.log('scrollToTime', current.time);
+
+        if (current.time) {
+            calendar.current?.getApi().scrollToTime(current.time);
         }
     }, [current]);
 

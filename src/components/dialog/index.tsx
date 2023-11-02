@@ -11,6 +11,8 @@ const Dialog: React.FC<DialogProps> = ({
     actions,
     prefer,
     autofocus,
+    className,
+    onDisplay,
 }) => {
     const memo = useMemo(() => inputs.reduce((names, current) => {
         names[current.name] = current.value;
@@ -107,10 +109,10 @@ const Dialog: React.FC<DialogProps> = ({
         return () => {
             document.removeEventListener('click', click);
         };
-      }, [dialogRef, cancellable, cancel, focus]);
+    }, [dialogRef, cancellable, cancel, focus]);
 
     return (
-        <div ref={dialogRef} className="dialog" onKeyDown={press} tabIndex={0}>
+        <div ref={dialogRef} className={['dialog', ...[className ? className : []]].join(' ')} onKeyDown={press} tabIndex={0}>
             <div className="contents">
                 {cancellable && <button className="exit" onClick={cancel} type="button">Exit {title && title} dialog box</button>}
                 <FocusLock>

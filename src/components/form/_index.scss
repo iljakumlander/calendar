@@ -5,6 +5,7 @@ $color-button-secondary: rgb(127, 127, 127);
 $color-secondary: #000;
 $font-size: 16px;
 
+@import 'eyedropper';
 
 form {
     display: flex;
